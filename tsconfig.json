@@ -2,6 +2,10 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+  "paths": {
+    "@news/utils": ["./utils/index.ts"]
+  }
+
   },
   "include": [
     "**/*.ts",
