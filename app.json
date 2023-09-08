@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "news-app",
+    "name": "News App",
     "slug": "news-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -22,7 +22,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.solus.newsapp",
+      "permissions": ["android.permission.INTERNET"]
+
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "66286cff-fcdc-46bd-9da0-04c58e21b802"
+      }
     }
   }
 }

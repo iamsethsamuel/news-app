@@ -11,6 +11,7 @@ export type AppContextType = {
     country: CountryType;
     showSnackbar: (msg: string) => void;
     updateCountry: (country: CountryType) => void;
+    colorScheme: "light" | "dark"|  null | undefined;
 };
 
 export type NewsRes = {

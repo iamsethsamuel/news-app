@@ -73,6 +73,7 @@ function RootLayoutNav() {
             <AppContext.Provider
                 value={{
                     country: country,
+                    colorScheme:colorScheme,
                     showSnackbar: (msg) => {
                         setMessage(msg);
                     },

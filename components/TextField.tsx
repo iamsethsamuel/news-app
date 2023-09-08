@@ -1,6 +1,7 @@
 import { styles } from "../utils/styles";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useContext, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
+import { AppContext } from "../utils/context";
 
 type TextFieldProps = {
     prefix?: ReactNode;
@@ -8,13 +9,14 @@ type TextFieldProps = {
 } & TextInput["props"];
 
 export default function TextField(props: TextFieldProps) {
-    const [search, setSearch] = useState("");
+    const {colorScheme} = useContext(AppContext),[search, setSearch] = useState("");
 
     return (
         <View style={props.style}>
             {props.prefix && <View style={localStyles.prefix}>{props.prefix}</View>}
             <TextInput
-                style={{ ...styles.inputField, marginVertical: 10, position: "relative",  }}
+                style={{ ...styles.inputField, marginVertical: 10, position: "relative", color: colorScheme === 'dark'? 'white': '#888888' }}
+                placeholderTextColor={colorScheme === 'dark'? 'white': '#888888'}
                 placeholder="Search"
                 onChangeText={setSearch}
                 value={search}
