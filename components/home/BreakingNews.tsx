@@ -24,6 +24,9 @@ export default function BreakingNews({ atBottom, setAtBottom }: { atBottom: bool
             if (isLoading) {
                 return;
             }
+            if (articles.length < 20) {
+                return;
+            }
 
             setPage((prev) => prev + 1);
             setAtBottom(false);
@@ -33,11 +36,14 @@ export default function BreakingNews({ atBottom, setAtBottom }: { atBottom: bool
     useEffect(() => {
         if (articlesList && articlesList.length > 0) {
             setArticles((prev) => [...prev, ...articlesList!]);
+            setPage(1);
+            setAtBottom(false);
         }
     }, [articlesList]);
 
     useEffect(() => {
-        if (!isLoading) {
+        if (articlesList) {
+            setArticles(articlesList);
         }
     }, [articlesList]);
 
@@ -51,8 +57,14 @@ export default function BreakingNews({ atBottom, setAtBottom }: { atBottom: bool
 
     return (
         <View style={{ ...styles.gridRow, marginHorizontal: 10, gap: 10, marginBottom: height() / 2 }}>
-            <Text style={{ ...styles.title, fontSize: 20, fontWeight: "900" }}>Breaking News</Text>
-
+            {articles.length > 0 && (
+                <Text style={{ ...styles.title, fontSize: 20, fontWeight: "900" }}>Breaking News</Text>
+            )}
+            {articles.length === 0 && (
+                <Text style={{ ...styles.title, fontSize: 20, fontWeight: "900", textAlign: "center" }}>
+                    No articles found
+                </Text>
+            )}
             {articles.map((article, index) => (
                 <View key={index} style={{ ...localStyles.card, ...styles.gridItem2 }}>
                     {article.urlToImage ? (
@@ -62,7 +74,7 @@ export default function BreakingNews({ atBottom, setAtBottom }: { atBottom: bool
                     ) : (
                         <View style={localStyles.image}></View>
                     )}
-                    <Text style={styles.title}>{article.title?.substring(0, 50)}</Text>
+                    <Text style={styles.title}>{article.title?.substring(0, 80)}</Text>
                     <Text style={styles.subtitle}>{article.content?.substring(0, 100)}</Text>
                     <Text style={styles.subtitle}>{calculateTimePassed(article.publishedAt)}</Text>
                 </View>

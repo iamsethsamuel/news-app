@@ -9,7 +9,9 @@ export type ResError = {
 
 export type AppContextType = {
     country: CountryType;
+    language: string,
     showSnackbar: (msg: string) => void;
+    updateLanguage: (language: string) => void;
     updateCountry: (country: CountryType) => void;
     colorScheme: "light" | "dark"|  null | undefined;
 };

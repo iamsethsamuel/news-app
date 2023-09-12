@@ -10,15 +10,19 @@ import { Text } from "../Themed";
 import * as Animatable from "react-native-animatable";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from "@expo/vector-icons";
+import { useRequest } from "../../utils/hooks";
+import * as Progress from "react-native-progress";
 
-export default function Carousel({ articles }: { articles: ArticleType[] }) {
+export default function Carousel() {
+    const { data: articles, isLoading, error } = useRequest<ArticleType[]>("/top-headlines");
+
     const [page, setPage] = useState(0),
         ref = useRef<PagerView>(null);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setPage((page) => {
-                if (page === articles.length - 1) {
+                if (articles && page === articles.length - 1) {
                     return 0;
                 }
                 return page + 1;
@@ -30,6 +34,19 @@ export default function Carousel({ articles }: { articles: ArticleType[] }) {
     useEffect(() => {
         ref.current?.setPage(page);
     }, [page]);
+
+    if (isLoading) {
+        return (
+            <View style={{ ...localStyles.container, flex: 1, width: width(), height: height() }}>
+                <Progress.CircleSnail color={["red", "green", "blue"]} />
+            </View>
+        );
+    }
+
+    if (error || !articles) {
+        return <Text>Error: {String(error)}</Text>;
+    }
+
 
     return (
         <View>
@@ -51,7 +68,7 @@ export default function Carousel({ articles }: { articles: ArticleType[] }) {
                         )}
                         {page === index && (
                             <LinearGradient
-                                colors={["rgba(255,255,255,0.01)", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.8099614845938375)"]}
+                                colors={["rgba(255,255,255,0.01)", "rgba(0,0,0,0.8099614845938375)", "rgba(0,0,0,0.9)", "rgba(0,0,0,0.1)"]}
                                 style={localStyles.detailsContainer}>
                                 <Animatable.View
                                     animation="lightSpeedIn"
@@ -78,6 +95,11 @@ export default function Carousel({ articles }: { articles: ArticleType[] }) {
 }
 
 const localStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
     viewPager: {
         width: Dimensions.get("window").width,
         height: height() / 2 - 30,

@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        flex: 1,
         justifyContent: "space-between",
     },
     gridItem2: {
@@ -14,7 +13,7 @@ export const styles = StyleSheet.create({
         width: "45%",
     },
     title: {
-        width: width() / 2,
+        width: '100%',
         textAlign: "left",
         fontSize: 18,
         fontWeight: "bold",

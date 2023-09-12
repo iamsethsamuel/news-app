@@ -2,7 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useColorScheme } from "react-native";
 import { Snackbar } from "react-native-paper";
 import Storage from "react-native-storage";
@@ -51,13 +51,15 @@ export default function RootLayout() {
 function RootLayoutNav() {
     const colorScheme = useColorScheme(),
         [country, setCountry] = useState<CountryType>("us"),
-        [message, setMessage] = useState<string>("");
+        [language, setLanguage] = useState<string>("en"),
+        [message, setMessage] = useState<string>(""),
+        { current: storage } = useRef<Storage>(
+            new Storage({
+                storageBackend: AsyncStorage,
+            })
+        );
 
     useEffect(() => {
-        const storage = new Storage({
-            storageBackend: AsyncStorage,
-        });
-
         storage
             .load({ key: "country" })
             .then((value) => {
@@ -66,19 +68,42 @@ function RootLayoutNav() {
                 }
             })
             .catch((err) => {});
+        storage
+            .load({ key: "language" })
+            .then((value) => {
+                if (value) {
+                    setLanguage(value);
+                }
+            })
+            .catch((err) => {});
     }, []);
+
 
     return (
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
             <AppContext.Provider
                 value={{
                     country: country,
-                    colorScheme:colorScheme,
+                    colorScheme: colorScheme,
+                    language: language,
+                    updateLanguage: (lang: string) => {
+                        storage
+                            .save({ key: "language", data: lang })
+                            .then(() => {
+                                setLanguage(lang);
+                            })
+                            .catch((err) => logError(err));
+                    },
                     showSnackbar: (msg) => {
                         setMessage(msg);
                     },
                     updateCountry: (country: CountryType) => {
-                        setCountry(country);
+                        storage
+                            .save({ key: "country", data: country })
+                            .then(() => {
+                                setCountry(country);
+                            })
+                            .catch((err) => logError(err));
                     },
                 }}>
                 <Snackbar
@@ -89,14 +114,8 @@ function RootLayoutNav() {
                     {message}
                 </Snackbar>
                 <Stack>
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false}}
-                    />
-                    <Stack.Screen
-                        name="newsdetails"
-                        options={{ headerShown: false}}
-                    />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen name="newsdetails" options={{ headerShown: false }} />
                 </Stack>
             </AppContext.Provider>
         </ThemeProvider>
